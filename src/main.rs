@@ -1,8 +1,5 @@
 use eframe::{
-    egui::{
-        self, Button, Direction, Label, Layout, RichText, TextEdit, TextStyle,
-    },
-    emath::Align,
+    egui::{self, Button, RichText, TextBuffer, TextEdit},
     epaint::{FontFamily, FontId},
 };
 
@@ -24,10 +21,10 @@ fn main() {
 }
 
 struct MyApp {
-    input: [String; 8],
+    input: [InputChunkBuffer; 8],
 }
 
-const EMPTY_INPUT: String = String::new();
+const EMPTY_INPUT: InputChunkBuffer = InputChunkBuffer::new();
 
 impl MyApp {
     fn new() -> Self {
@@ -56,6 +53,7 @@ impl eframe::App for MyApp {
                     );
                 });
             });
+
             ui.separator();
             ui.add_space(5.0);
 
@@ -68,6 +66,7 @@ impl eframe::App for MyApp {
                     );
                 });
             });
+
             ui.add_space(10.0);
 
             ui.horizontal(|ui| {
@@ -86,14 +85,9 @@ impl eframe::App for MyApp {
                     .font(INPUT_FONT_ID)
                     .show(ui);
             });
-            //ui.horizontal(|ui| {
-            //    ui.centered_and_justified(|ui| {
-            //        if ui.add(Button::new("Click to Shorten")).clicked() {
-            //            println!("mama ti");
-            //        }
-            //    })
-            //});
+
             ui.add_space(10.0);
+
             ui.horizontal(|ui| {
                 ui.add_space(WIN_WIDTH / 2.0 - 55.0);
                 if ui.add(Button::new("Click to Shorten")).clicked() {
@@ -101,5 +95,51 @@ impl eframe::App for MyApp {
                 }
             });
         });
+    }
+}
+
+const INPUT_CHUNK_MAX_CHARS: usize = 4;
+
+/// InputChunkBuffer holds a input String buffer with length of 4 hexadecimal characters.
+#[derive(Debug, Default)]
+struct InputChunkBuffer {
+    data: String,
+}
+
+impl InputChunkBuffer {
+    pub const fn new() -> Self {
+        Self {
+            data: String::new()
+        }
+    }
+}
+
+impl TextBuffer for InputChunkBuffer {
+    // InputChunk is always mutable.
+    fn is_mutable(&self) -> bool {
+        true
+    }
+
+    fn as_str(&self) -> &str {
+        &self.data
+    }
+
+    fn insert_text(&mut self, text: &str, char_index: usize) -> usize {
+        let mut inserted = 0;
+        for c in text.chars().rev() {
+            if self.data.len() < INPUT_CHUNK_MAX_CHARS {
+                if let Some(_) = c.to_digit(16) {
+                    self.data.insert(char_index, c);
+                    inserted += 1;
+                }
+                continue;
+            }
+            break;
+        }
+        inserted
+    }
+
+    fn delete_char_range(&mut self, char_range: std::ops::Range<usize>) {
+        self.data.drain(char_range);
     }
 }
