@@ -22,6 +22,7 @@ fn main() {
 
 struct MyApp {
     input: [InputChunkBuffer; 8],
+    output: ResultOutput
 }
 
 const EMPTY_INPUT: InputChunkBuffer = InputChunkBuffer::new();
@@ -30,15 +31,18 @@ impl MyApp {
     fn new() -> Self {
         Self {
             input: [EMPTY_INPUT; 8],
+            output: ResultOutput::new()
         }
     }
 }
 
+const HEADING: &str = "IPv6 shortener";
 const HEADING_FONT_ID: FontId = FontId::new(20.0, FontFamily::Monospace);
 const INPUT_FONT_ID: FontId = FontId::new(17.0, FontFamily::Monospace);
 const TEXT_FONT_ID: FontId = FontId::new(14.0, FontFamily::Monospace);
 const INPUT_BOX_WIDTH: f32 = 40.0;
-const HINT_TEXT: &str = "0000";
+const INPUT_HINT_TEXT: &str = "0000";
+const OUTPUT_HINT_TEXT: &str = "Shortened IPv6 will appear here.";
 
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
@@ -46,7 +50,7 @@ impl eframe::App for MyApp {
             ui.horizontal(|ui| {
                 ui.centered_and_justified(|ui| {
                     ui.label(
-                        RichText::new("IPv6 shortener")
+                        RichText::new(HEADING)
                             .strong()
                             .underline()
                             .font(HEADING_FONT_ID),
@@ -74,14 +78,14 @@ impl eframe::App for MyApp {
                 for i in 0..7 {
                     TextEdit::singleline(&mut self.input[i])
                         .desired_width(INPUT_BOX_WIDTH)
-                        .hint_text(HINT_TEXT)
+                        .hint_text(INPUT_HINT_TEXT)
                         .font(INPUT_FONT_ID)
                         .show(ui);
                     ui.label(RichText::new(":").font(INPUT_FONT_ID).strong());
                 }
                 TextEdit::singleline(&mut self.input[7])
                     .desired_width(INPUT_BOX_WIDTH)
-                    .hint_text(HINT_TEXT)
+                    .hint_text(INPUT_HINT_TEXT)
                     .font(INPUT_FONT_ID)
                     .show(ui);
             });
@@ -94,7 +98,51 @@ impl eframe::App for MyApp {
                     println!("mama ti");
                 }
             });
+
+            ui.add_space(10.0);
+
+            ui.horizontal(|ui| {
+                TextEdit::multiline(&mut self.output).desired_rows(2)
+                .hint_text(OUTPUT_HINT_TEXT).frame(true).font(INPUT_FONT_ID).show(ui);
+            });
+
+            ui.add_space(13.0);
+
+            if ui.button("Copy to clipboard").clicked() {
+
+            }
         });
+    }
+}
+
+struct ResultOutput {
+    result: String
+}
+
+impl ResultOutput {
+    pub fn new() -> Self {
+        Self {
+            result: String::from("mama tiiiaidiamdio eaiofuwe")
+        }
+    }
+}
+
+impl TextBuffer for ResultOutput {
+    // Result output text is never mutable.
+    fn is_mutable(&self) -> bool {
+        false
+    }
+
+    fn as_str(&self) -> &str {
+        &self.result
+    }
+
+    fn insert_text(&mut self, text: &str, char_index: usize) -> usize {
+        0 // Buffer is immutable
+    }
+
+    fn delete_char_range(&mut self, char_range: std::ops::Range<usize>) {
+        // Buffer is immutable
     }
 }
 
@@ -140,6 +188,6 @@ impl TextBuffer for InputChunkBuffer {
     }
 
     fn delete_char_range(&mut self, char_range: std::ops::Range<usize>) {
-        self.data.drain(char_range);
+        self.data.delete_char_range(char_range);
     }
 }
