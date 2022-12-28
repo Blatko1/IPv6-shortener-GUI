@@ -1,7 +1,9 @@
-mod gui;
+mod app;
+mod error;
+mod shortener;
 
+use app::IPv6ShortenApp;
 use eframe::egui;
-use gui::GUI;
 
 pub const WIN_WIDTH: f32 = 600.0;
 pub const WIN_HEIGHT: f32 = 240.0;
@@ -13,9 +15,10 @@ fn main() {
         resizable: false,
         ..Default::default()
     };
+
     eframe::run_native(
         "IPv6 Shortener",
         options,
-        Box::new(|cc| Box::new(GUI::new())),
+        Box::new(|cc| Box::new(IPv6ShortenApp::new())),
     );
 }
