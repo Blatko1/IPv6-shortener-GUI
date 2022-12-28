@@ -102,14 +102,12 @@ pub fn shorten_ipv6(ipv6: &[InputChunkBuffer; 8]) -> String {
     output
 }
 
-impl Into<Chunk> for &InputChunkBuffer {
-    fn into(self) -> Chunk {
-        let mut chars = self.buf.chars();
-        Chunk([
-            chars.next().unwrap(),
-            chars.next().unwrap(),
-            chars.next().unwrap(),
-            chars.next().unwrap(),
-        ])
+impl From<&InputChunkBuffer> for Chunk {
+    fn from(buffer: &InputChunkBuffer) -> Self {
+        let mut chars = buffer.buf.chars();
+        Self([chars.next().unwrap(),
+        chars.next().unwrap(),
+        chars.next().unwrap(),
+        chars.next().unwrap(),])
     }
 }

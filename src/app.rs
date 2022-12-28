@@ -197,7 +197,7 @@ impl TextBuffer for InputChunkBuffer {
         let mut inserted = 0;
         for c in text.chars().rev() {
             if self.buf.len() < INPUT_CHUNK_MAX_CHARS {
-                if let Some(_) = c.to_digit(16) {
+                if c.is_ascii_hexdigit() {
                     self.buf.insert(char_index, c);
                     inserted += 1;
                 }

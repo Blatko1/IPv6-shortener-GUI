@@ -19,6 +19,6 @@ fn main() {
     eframe::run_native(
         "IPv6 Shortener",
         options,
-        Box::new(|cc| Box::new(IPv6ShortenApp::new())),
+        Box::new(|_cc| Box::new(IPv6ShortenApp::new())),
     );
 }
