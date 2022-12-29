@@ -6,7 +6,7 @@ mod icon;
 mod shortener;
 
 use app::IPv6ShortenApp;
-use eframe::{egui, IconData};
+use eframe::egui;
 
 pub const WIN_WIDTH: f32 = 600.0;
 pub const WIN_HEIGHT: f32 = 240.0;
