@@ -7,7 +7,6 @@ struct Chunk([char; 4]);
 
 impl Chunk {
     pub fn shorten(&self) -> String {
-        // 0100
         let mut short = String::new();
         let mut hidden = true;
         for c in self.0[0..3].iter() {
@@ -79,7 +78,7 @@ pub fn shorten_ipv6(ipv6: &[InputChunkBuffer; 8]) -> String {
             output.push(':');
             while let Some((i, chunk)) = chunk_iter.next() {
                 if start_idx == i {
-                    for _ in start_idx..end_idx-1 {
+                    for _ in start_idx..end_idx - 1 {
                         chunk_iter.next();
                     }
                     output.push(':');
@@ -105,9 +104,11 @@ pub fn shorten_ipv6(ipv6: &[InputChunkBuffer; 8]) -> String {
 impl From<&InputChunkBuffer> for Chunk {
     fn from(buffer: &InputChunkBuffer) -> Self {
         let mut chars = buffer.buf.chars();
-        Self([chars.next().unwrap(),
-        chars.next().unwrap(),
-        chars.next().unwrap(),
-        chars.next().unwrap(),])
+        Self([
+            chars.next().unwrap(),
+            chars.next().unwrap(),
+            chars.next().unwrap(),
+            chars.next().unwrap(),
+        ])
     }
 }

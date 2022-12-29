@@ -23,7 +23,10 @@ impl IPv6ShortenApp {
     fn shorten_button_action(&mut self) {
         match self.validate_input() {
             Ok(_) => {
-                self.output.update(format!("Result: {}", crate::shortener::shorten_ipv6(&self.input)));
+                self.output.update(format!(
+                    "Result: {}",
+                    crate::shortener::shorten_ipv6(&self.input)
+                ));
             }
             Err(msg) => self.output.update(msg.to_string()),
         }
